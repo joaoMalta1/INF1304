@@ -7,8 +7,17 @@
         let wsConsumer;
 
         document.addEventListener('DOMContentLoaded', function() {
-            wsProducer = new WebSocket("ws://localhost:8080/chat/ws");
-            wsConsumer = new WebSocket("ws://localhost:8081/chat/ws");
+            // Pega o nome do host da página atual (ex: localhost, meuchat.com, 192.168.1.100)
+            const serverAddress = window.location.hostname;
+            const serverAddress8080 = serverAddress.replace("-8000", "-8080");
+            const serverAddress8081 = serverAddress.replace("-8000", "-8081");
+
+            console.log(`Tentando conexão com ${serverAddress8080} na porta 8080`);
+            console.log(`Tentando conexão com ${serverAddress8081} na porta 8081`);
+
+            // Constrói o URL do WebSocket dinamicamente
+            wsProducer = new WebSocket(`ws://${serverAddress8080}/chat/ws`);
+            wsConsumer = new WebSocket(`ws://${serverAddress8081}/chat/ws`);
 
             wsProducer.onmessage = function(event) {
                 let chatbox = document.getElementById("chatboxproducer");

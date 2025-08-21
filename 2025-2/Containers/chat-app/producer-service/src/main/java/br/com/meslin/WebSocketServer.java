@@ -21,7 +21,7 @@ public class WebSocketServer {
 
     public static void startServer(ChatProducer producer) {
         chatProducer = producer;
-        server = new Server("localhost", 8080, "/chat", null, WebSocketServer.class);
+        server = new Server("localhost", 8000, "/chat", null, WebSocketServer.class);
 
         try {
             server.start();
