@@ -3,10 +3,10 @@ import json
 import time
 
 # Endereço do servidor WebSocket
-WS_SERVER = "ws://localhost:8080/chat"   # ajuste se necessário
+WS_SERVER = "ws://localhost:8080/chat/ws"
 
 def on_open(ws):
-    print("✅ Conexão aberta com o servidor WebSocket.")
+    print("[INFO] Conexão aberta com o servidor WebSocket.")
     print("Digite suas mensagens abaixo. Para sair, digite 'exit'.")
 
     try:
@@ -29,18 +29,22 @@ def on_open(ws):
             print(f">>> Enviado: {msg}")
 
     except KeyboardInterrupt:
-        print("\nEncerrando cliente...")
+        print("\n[INFO] Encerrando cliente...")
 
     ws.close()
+    return
 
 def on_message(ws, message):
-    print(f"<<< Recebido do servidor: {message}")
+    print(f"<<< Recebido do servidor: {message}.")
+    return
 
 def on_error(ws, error):
-    print(f"⚠️ Erro: {error}")
+    print(f"[ERROR] Erro: {error}.")
+    return
 
 def on_close(ws, close_status_code, close_msg):
-    print("❌ Conexão fechada com o servidor WebSocket.")
+    print("[INFO] Conexão fechada com o servidor WebSocket.")
+    return
 
 if __name__ == "__main__":
     websocket.enableTrace(False)

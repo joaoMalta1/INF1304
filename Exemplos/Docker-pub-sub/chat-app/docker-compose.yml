@@ -1,4 +1,4 @@
-version: '3'
+#version: '3.8'
 services:
   zookeeper:
     image: zookeeper:3.6.3
@@ -11,7 +11,8 @@ services:
         reservations:
           memory: 256M
     networks:
-      - my-network
+#      - my-network
+      - internal-network
 
   kafka:
     image: wurstmeister/kafka:latest
@@ -30,7 +31,8 @@ services:
         reservations:
           memory: 512M
     networks:
-      - my-network
+#      - my-network
+      - internal-network
 
   producer-service:
     build: ./producer-service
@@ -46,6 +48,7 @@ services:
           memory: 256M
     networks:
       - my-network
+      - internal-network
 
   consumer-service:
     build: ./consumer-service
@@ -61,7 +64,11 @@ services:
           memory: 256M
     networks:
       - my-network
+      - internal-network
 
 networks:
   my-network:
     driver: bridge
+  internal-network:
+    driver: bridge
+    internal: true

@@ -39,16 +39,16 @@ public class ChatProducer {
     }
     
     public static void main(String[] args) {
-        logger.info("Starting Chat Producer.");
+        logger.info("[ChatProducer.main] Starting Chat Producer.");
         ChatProducer chatProducer = new ChatProducer("chat-messages");
         WebSocketServer.startServer(chatProducer);
 
         // Keep the application running
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            logger.info("Shutting down...");
+            logger.info("[ChatProducer.main] Shutting down...");
             WebSocketServer.stopServer();
             chatProducer.close();
-            logger.info("Shutdown complete.");
+            logger.info("[ChatProducer.main] Shutdown complete.");
         }));
 
         try {
