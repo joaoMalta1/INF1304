@@ -48,6 +48,6 @@ logs-consumer:
 	kubectl logs -n $(NAMESPACE) deployment/consumer-service
 
 ## Limpa tudo (inclusive o namespace)
-clean:
+clean:	down
 	@echo "Removendo namespace $(NAMESPACE) e todos os recursos..."
 	kubectl delete namespace $(NAMESPACE) --ignore-not-found

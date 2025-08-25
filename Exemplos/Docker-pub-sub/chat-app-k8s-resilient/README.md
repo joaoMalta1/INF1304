@@ -31,7 +31,14 @@ $ make clean
     ```bash
     chat-app-k8s-resilient (main) $ minikube status
     ```
-    Saída:
+    O Minikube precisa ser iniciado se o resultado for uma das duas saídas:
+
+    **Saída 1:**
+    ```bash
+    🤷  Profile "minikube" not found. Run "minikube profile list" to view all profiles.
+    👉  To start a cluster, run: "minikube start"
+    ```
+    **Saída 2:**
     ```bash
     minikube
     type: Control Plane
@@ -40,8 +47,17 @@ $ make clean
     apiserver: Stopped
     kubeconfig: Stopped
     ```
+    Por outro lado, se o resultado for compatível com o seguinte, o Minikube está pronto:
+    ```bash
+    minikube
+    type: Control Plane
+    host: Running
+    kubelet: Running
+    apiserver: Running
+    kubeconfig: Configured
+    ```
 
-    Se o Minikube estiver parado, iniciar o Minikube:
+    Se o Minikube estiver parado, iniciar o Minikube (vai demorar):
     ```bash
     chat-app-k8s-resilient (main) $ minikube start
     ```
@@ -66,40 +82,111 @@ $ make clean
     chat-app (main) $ ./build-image.sh 
     ```
     Saída:
-    ```bash
-    [+] Building 1.8s (8/8) FINISHED                                                                                                                                                           docker:default
-    => [internal] load build definition from Dockerfile                                                                                                                                                 0.0s
-    => => transferring dockerfile: 215B                                                                                                                                                                 0.0s
-    => [internal] load metadata for docker.io/library/openjdk:11-jre-slim                                                                                                                               0.0s
-    => [internal] load .dockerignore                                                                                                                                                                    0.0s
-    => => transferring context: 2B                                                                                                                                                                      0.0s
-    => [1/3] FROM docker.io/library/openjdk:11-jre-slim                                                                                                                                                 0.0s
-    => [internal] load build context                                                                                                                                                                    1.7s
-    => => transferring context: 20.33MB                                                                                                                                                                 1.6s
-    => CACHED [2/3] WORKDIR /app                                                                                                                                                                        0.0s
-    => CACHED [3/3] COPY target/producer-service-jar-with-dependencies.jar producer-service.jar                                                                                                         0.0s
-    => exporting to image                                                                                                                                                                               0.0s
-    => => exporting layers                                                                                                                                                                              0.0s
-    => => writing image sha256:90d2139ffad532c3aa0dc167c10ad55c8d905325018c65b8e8265501d173856a                                                                                                         0.0s
-    => => naming to docker.io/library/producer-service:latest                                                                                                                                           0.0s
-    [+] Building 1.6s (8/8) FINISHED                                                                                                                                                           docker:default
-    => [internal] load build definition from Dockerfile                                                                                                                                                 0.0s
-    => => transferring dockerfile: 215B                                                                                                                                                                 0.0s
-    => [internal] load metadata for docker.io/library/openjdk:11-jre-slim                                                                                                                               0.0s
-    => [internal] load .dockerignore                                                                                                                                                                    0.0s
-    => => transferring context: 2B                                                                                                                                                                      0.0s
-    => [1/3] FROM docker.io/library/openjdk:11-jre-slim                                                                                                                                                 0.0s
-    => [internal] load build context                                                                                                                                                                    1.5s
-    => => transferring context: 20.05MB                                                                                                                                                                 1.5s
-    => CACHED [2/3] WORKDIR /app                                                                                                                                                                        0.0s
-    => CACHED [3/3] COPY target/consumer-service-jar-with-dependencies.jar consumer-service.jar                                                                                                         0.0s
-    => exporting to image                                                                                                                                                                               0.0s
-    => => exporting layers                                                                                                                                                                              0.0s
-    => => writing image sha256:62e380c14d04279bee0617e43abab8dd70d5ce8c4e1d26bba7048f5da299924c                                                                                                         0.0s
-    => => naming to docker.io/library/consumer-service:latest  
-     ```
+    ```text
+    [INFO] Scanning for projects...
+    [INFO] 
+    [INFO] -------------------< br.com.meslin:producer-service >-------------------
+    [INFO] Building producer-service 1.0-SNAPSHOT
+    [INFO]   from pom.xml
+    [INFO] --------------------------------[ jar ]---------------------------------
+    [INFO] 
+    [INFO] --- clean:3.2.0:clean (default-clean) @ producer-service ---
+    [INFO] Deleting /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/producer-service/target
+    [INFO] 
+    [INFO] --- resources:3.3.1:resources (default-resources) @ producer-service ---
+    [INFO] skip non existing resourceDirectory /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/producer-service/src/main/resources
+    [INFO] 
+    [INFO] --- compiler:3.8.1:compile (default-compile) @ producer-service ---
+    [INFO] Changes detected - recompiling the module!
+    [INFO] Compiling 2 source files to /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/producer-service/target/classes
+    [INFO] 
+    [INFO] --- resources:3.3.1:testResources (default-testResources) @ producer-service ---
+    [INFO] skip non existing resourceDirectory /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/producer-service/src/test/resources
+    [INFO] 
+    [INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ producer-service ---
+    [INFO] No sources to compile
+    [INFO] 
+    [INFO] --- surefire:3.2.5:test (default-test) @ producer-service ---
+    [INFO] No tests to run.
+    [INFO] 
+    [INFO] --- assembly:3.3.0:single (make-assembly) @ producer-service ---
+    [INFO] Building jar: /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/producer-service/target/producer-service-jar-with-dependencies.jar
+    [INFO] ------------------------------------------------------------------------
+    [INFO] BUILD SUCCESS
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Total time:  8.199 s
+    [INFO] Finished at: 2025-08-25T21:36:39Z
+    [INFO] ------------------------------------------------------------------------
 
-1. Subir no Minikube
+    [+] Building 2.1s (9/9) FINISHED                                                                                                                                                           docker:default
+    => [internal] load build definition from Dockerfile                                                                                                                                                 0.0s
+    => => transferring dockerfile: 215B                                                                                                                                                                 0.0s
+    => [internal] load metadata for docker.io/library/openjdk:11-jre-slim                                                                                                                               0.1s
+    => [auth] library/openjdk:pull token for registry-1.docker.io                                                                                                                                       0.0s
+    => [internal] load .dockerignore                                                                                                                                                                    0.0s
+    => => transferring context: 2B                                                                                                                                                                      0.0s
+    => [1/3] FROM docker.io/library/openjdk:11-jre-slim@sha256:93af7df2308c5141a751c4830e6b6c5717db102b3b31f012ea29d842dc4f2b02                                                                         0.0s
+    => [internal] load build context                                                                                                                                                                    0.2s
+    => => transferring context: 20.33MB                                                                                                                                                                 0.2s
+    => CACHED [2/3] WORKDIR /app                                                                                                                                                                        0.0s
+    => [3/3] COPY target/producer-service-jar-with-dependencies.jar producer-service.jar                                                                                                                0.8s
+    => exporting to image                                                                                                                                                                               0.9s
+    => => exporting layers                                                                                                                                                                              0.9s
+    => => writing image sha256:6d8fd114ef43daa0cf9cdd8e17f527e8501b6a0a3ac4a3fda18ae980e3027cc7                                                                                                         0.0s
+    => => naming to docker.io/library/producer-service:latest                                                                                                                                           0.0s
+    [INFO] Scanning for projects...
+    [INFO] 
+    [INFO] -------------------< br.com.meslin:consumer-service >-------------------
+    [INFO] Building consumer-service 1.0-SNAPSHOT
+    [INFO]   from pom.xml
+    [INFO] --------------------------------[ jar ]---------------------------------
+    [INFO] 
+    [INFO] --- clean:3.2.0:clean (default-clean) @ consumer-service ---
+    [INFO] Deleting /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/consumer-service/target
+    [INFO] 
+    [INFO] --- resources:3.3.1:resources (default-resources) @ consumer-service ---
+    [INFO] skip non existing resourceDirectory /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/consumer-service/src/main/resources
+    [INFO] 
+    [INFO] --- compiler:3.8.1:compile (default-compile) @ consumer-service ---
+    [INFO] Changes detected - recompiling the module!
+    [INFO] Compiling 2 source files to /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/consumer-service/target/classes
+    [INFO] 
+    [INFO] --- resources:3.3.1:testResources (default-testResources) @ consumer-service ---
+    [INFO] skip non existing resourceDirectory /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/consumer-service/src/test/resources
+    [INFO] 
+    [INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ consumer-service ---
+    [INFO] No sources to compile
+    [INFO] 
+    [INFO] --- surefire:3.2.5:test (default-test) @ consumer-service ---
+    [INFO] No tests to run.
+    [INFO] 
+    [INFO] --- assembly:3.3.0:single (make-assembly) @ consumer-service ---
+    [INFO] Building jar: /workspaces/INF1304/Exemplos/Docker-pub-sub/chat-app/consumer-service/target/consumer-service-jar-with-dependencies.jar
+    [INFO] ------------------------------------------------------------------------
+    [INFO] BUILD SUCCESS
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Total time:  7.639 s
+    [INFO] Finished at: 2025-08-25T21:36:51Z
+    [INFO] ------------------------------------------------------------------------
+
+    [+] Building 1.4s (8/8) FINISHED                                                                                                                                                           docker:default
+    => [internal] load build definition from Dockerfile                                                                                                                                                 0.0s
+    => => transferring dockerfile: 215B                                                                                                                                                                 0.0s
+    => [internal] load metadata for docker.io/library/openjdk:11-jre-slim                                                                                                                               0.1s
+    => [internal] load .dockerignore                                                                                                                                                                    0.0s
+    => => transferring context: 2B                                                                                                                                                                      0.0s
+    => [1/3] FROM docker.io/library/openjdk:11-jre-slim@sha256:93af7df2308c5141a751c4830e6b6c5717db102b3b31f012ea29d842dc4f2b02                                                                         0.0s
+    => [internal] load build context                                                                                                                                                                    0.1s
+    => => transferring context: 20.05MB                                                                                                                                                                 0.1s
+    => CACHED [2/3] WORKDIR /app                                                                                                                                                                        0.0s
+    => [3/3] COPY target/consumer-service-jar-with-dependencies.jar consumer-service.jar                                                                                                                0.8s
+    => exporting to image                                                                                                                                                                               0.3s
+    => => exporting layers                                                                                                                                                                              0.3s
+    => => writing image sha256:781b64d90f784006dc9a0d49f409d2346426c26621c2d8390b6afee7f2b3b442                                                                                                         0.0s
+    => => naming to docker.io/library/consumer-service:latest
+    ```
+
+1. Subir as imagens no Minikube
     ```bash
     chat-app-k8s-resilient (main) $ make up
     ```
@@ -157,9 +244,21 @@ $ make clean
     ```
 
 1. Redirecione as portas:
+    Verifique se as portas do produtor e do consumidor já foram redirecionadas.
+    ```bash
+    chat-app-k8s-resilient (main) $ lsof -i -P -n | grep kubectl | grep -i listen
+    ```
+    Resultado:
+    ```text
+    kubectl 39118 codespace    8u  IPv4 354059      0t0  TCP 127.0.0.1:8080 (LISTEN)
+    kubectl 39118 codespace    9u  IPv6 354061      0t0  TCP [::1]:8080 (LISTEN)
+    kubectl 41513 codespace    8u  IPv4 383845      0t0  TCP 127.0.0.1:8081 (LISTEN)
+    kubectl 41513 codespace    9u  IPv6 384634      0t0  TCP [::1]:8081 (LISTEN)
+    ```    
+    Se não tiverem sido, redirecione-as.
     * Porta do produtor:
     ```bash
-    chat-app/frontend (main) $ kubectl port-forward svc/producer-service -n kafka-demo 8080:8080
+    chat-app/frontend (main) $ kubectl port-forward svc/producer-service -n kafka-demo 8080:8080 > /dev/null &
     ```
     Resultado
     ```bash
@@ -168,7 +267,7 @@ $ make clean
     ```
     * Porta do consumidor
     ```bash
-    chat-app/frontend (main) $ kubectl port-forward svc/consumer-service -n kafka-demo 8081:8080 &
+    chat-app/frontend (main) $ kubectl port-forward svc/consumer-service -n kafka-demo 8081:8080 > /dev/null &
     ```
     Resultado:
     ```bash
@@ -176,7 +275,7 @@ $ make clean
     Forwarding from [::1]:8081 -> 8080
     ```
 
-1. Para para toda a aplicação (pode demorar um pouco):
+1. Para parar toda a aplicação (pode demorar um pouco):
     ```bash
     chat-app-k8s-resilient (main) $ make down
     ```
