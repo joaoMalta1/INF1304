@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  namespace: kafka-demo
+spec:
+  ports:
+    - port: 2181
+      name: client
+  clusterIP: None
+  selector:
+    app: zookeeper
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+  namespace: kafka-demo
+spec:
+  serviceName: zookeeper
+  replicas: 2
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: zookeeper:3.6.3
+          ports:
+            - containerPort: 2181
+              name: client
+          resources:
+            limits:
+              memory: "512Mi"
+            requests:
+              memory: "256Mi"

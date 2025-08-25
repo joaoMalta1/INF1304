@@ -1,6 +1,4 @@
 import websocket
-import json
-import time
 
 # Endereço do servidor WebSocket do ChatConsumer
 WS_SERVER = "ws://localhost:8081/chat/ws"
