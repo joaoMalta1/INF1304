@@ -1,16 +1,3 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: zookeeper
-  namespace: kafka-demo
-spec:
-  ports:
-    - port: 2181
-      name: client
-  clusterIP: None
-  selector:
-    app: zookeeper
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -28,13 +15,34 @@ spec:
         app: zookeeper
     spec:
       containers:
-        - name: zookeeper
-          image: zookeeper:3.6.3
-          ports:
-            - containerPort: 2181
-              name: client
-          resources:
-            limits:
-              memory: "512Mi"
-            requests:
-              memory: "256Mi"
+      - name: zookeeper
+        image: zookeeper:3.6.3
+        ports:
+          - containerPort: 2181
+            name: client
+          - containerPort: 2888
+            name: follower
+          - containerPort: 3888
+            name: election
+        env:
+          - name: ZOO_SERVERS
+            value: >
+              server.1=zookeeper-0.zookeeper:2888:3888
+              server.2=zookeeper-1.zookeeper:2888:3888
+        volumeMounts:
+          - name: datadir
+            mountPath: /data
+      initContainers:
+      - name: init-myid
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          echo $(( ${HOSTNAME##*-} + 1 )) > /data/myid
+        volumeMounts:
+          - name: datadir
+            mountPath: /data
+      volumes:
+        - name: datadir
+          emptyDir: {}
