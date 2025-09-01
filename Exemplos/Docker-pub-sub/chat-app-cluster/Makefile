@@ -22,6 +22,7 @@ stop:
 	docker stop chat-app-cluster-kafka2-1 || true
 	docker stop chat-app-cluster-zookeeper1-1 || true
 	docker stop chat-app-cluster-zookeeper2-1 || true
+	docker stop chat-app-cluster-frontend-1 || true
 	docker rm chat-app-cluster-consumer-service0-1 || true
 	docker rm chat-app-cluster-consumer-service1-1 || true
 	docker rm chat-app-cluster-producer-service0-1 || true
@@ -30,6 +31,7 @@ stop:
 	docker rm chat-app-cluster-kafka2-1 || true
 	docker rm chat-app-cluster-zookeeper1-1 || true
 	docker rm chat-app-cluster-zookeeper2-1 || true
+	docker rm chat-app-cluster-frontend-1 || true
 	docker ps -a
 
 # Compila o produtor

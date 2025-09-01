@@ -21,7 +21,7 @@ public class ChatConsumer {
     private static final Logger logger = LoggerFactory.getLogger(ChatConsumer.class);
 
     public static void main(String[] args) {
-        logger.info("Startint Chat Consumer.");
+        logger.info("Starting Chat Consumer.");
         Properties props = new Properties();
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("group.id", GROUP_ID);
