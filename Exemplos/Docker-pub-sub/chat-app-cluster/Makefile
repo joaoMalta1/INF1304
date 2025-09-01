@@ -14,24 +14,24 @@ all: stop $(PRODUCER_JAR) $(CONSUMER_JAR) build up status
 stop:
 	@echo "Parando containers..."
 	docker ps -a
-	docker stop chat-app-cluster-consumer-service0-1 || true
-	docker stop chat-app-cluster-consumer-service1-1 || true
-	docker stop chat-app-cluster-producer-service0-1 || true
-	docker stop chat-app-cluster-producer-service1-1 || true
-	docker stop chat-app-cluster-kafka1-1 || true
-	docker stop chat-app-cluster-kafka2-1 || true
-	docker stop chat-app-cluster-zookeeper1-1 || true
-	docker stop chat-app-cluster-zookeeper2-1 || true
-	docker stop chat-app-cluster-frontend-1 || true
-	docker rm chat-app-cluster-consumer-service0-1 || true
-	docker rm chat-app-cluster-consumer-service1-1 || true
-	docker rm chat-app-cluster-producer-service0-1 || true
-	docker rm chat-app-cluster-producer-service1-1 || true
-	docker rm chat-app-cluster-kafka1-1 || true
-	docker rm chat-app-cluster-kafka2-1 || true
-	docker rm chat-app-cluster-zookeeper1-1 || true
-	docker rm chat-app-cluster-zookeeper2-1 || true
-	docker rm chat-app-cluster-frontend-1 || true
+	docker stop consumer_service0 || true
+	docker stop consumer_service1 || true
+	docker stop producer_service0 || true
+	docker stop producer_service1 || true
+	docker stop kafka1 || true
+	docker stop kafka2 || true
+	docker stop kafka3 || true
+	docker stop frontend1 || true
+	docker stop router || true
+	docker rm consumer_service0 || true
+	docker rm consumer_service1 || true
+	docker rm producer_service0 || true
+	docker rm producer_service1 || true
+	docker rm kafka1 || true
+	docker rm kafka2 || true
+	docker rm kafka3 || true
+	docker rm frontend1 || true
+	docker rm router || true
 	docker ps -a
 
 # Compila o produtor

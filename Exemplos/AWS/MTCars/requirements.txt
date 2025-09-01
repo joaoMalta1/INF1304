@@ -1,0 +1,4 @@
+django
+# instalado para MTCars
+djangorestframework
+mysqlclient==2.0.3
