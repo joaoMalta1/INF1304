@@ -5,8 +5,7 @@ import time
 # Lista de servidores WebSocket disponíveis
 WS_SERVER = [
     "ws://localhost:8080/chat/ws",
-    "ws://localhost:8081/chat/ws",
-    "ws://localhost:8082/chat/ws"
+    "ws://localhost:8180/chat/ws"
 ]
 
 def chat_loop(ws):

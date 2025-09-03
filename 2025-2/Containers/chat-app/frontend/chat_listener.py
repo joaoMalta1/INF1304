@@ -4,8 +4,7 @@ import time
 
 WS_SERVERS = [
     "ws://localhost:8081/chat/ws",
-    "ws://localhost:8082/chat/ws",
-    "ws://localhost:8083/chat/ws"
+    "ws://localhost:8181/chat/ws"
 ]
 
 def on_open(ws):

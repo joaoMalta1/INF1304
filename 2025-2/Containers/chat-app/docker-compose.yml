@@ -1,30 +1,29 @@
 #version: '3'
 services:
-  zookeeper:
-    image: zookeeper:3.6.3
-    ports:
-      - "2181:2181"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
-    networks:
-      - int-network
-
-  kafka:
-    image: wurstmeister/kafka:latest
+  kafka1:
+    # https://hub.docker.com/r/apache/kafka
+    # https://stackoverflow.com/questions/78807386/kafka-kraft-mode-with-docker-compose
+    container_name: kafka1
+    image: apache/kafka:4.0.0
     ports:
       - "9092:9092"
+      - "19092:19092" # Expose CONTROLLER port for host access
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_DEBUG: 1
-      #DEBUG_SUSPEND_FLAG: y
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:19092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # KAFKA_CONTROLLER_QUORUM_VOTERS: <node_id>@<hostname>:<port>
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:19092,2@kafka2:19093,3@kafka3:19094
+      KAFKA_LOG_DIRS: /var/lib/kafka/data/
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 1
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - kafka1_logs:/var/lib/kafka/data/
     deploy:
       resources:
         limits:
@@ -32,44 +31,167 @@ services:
         reservations:
           memory: 512M
     networks:
-      - int-network
+      - my-network
 
-  producer-service:
+  kafka2:
+    container_name: kafka2
+    image: apache/kafka:4.0.0
+    ports:
+      - "9093:9093"
+      - "19093:19093" # Expose CONTROLLER port for host access
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,CONTROLLER://0.0.0.0:19093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # KAFKA_CONTROLLER_QUORUM_VOTERS: <node_id>@<hostname>:<port>
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:19092,2@kafka2:19093,3@kafka3:19094
+      KAFKA_LOG_DIRS: /var/lib/kafka/data/
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+    volumes:
+      - kafka2_logs:/var/lib/kafka/data/
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    networks:
+      - my-network
+
+  kafka3:
+    container_name: kafka3
+    image: apache/kafka:4.0.0
+    ports:
+      - "9094:9094"
+      - "19094:19094" # Expose CONTROLLER port for host access
+    environment:
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094,CONTROLLER://0.0.0.0:19094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # KAFKA_CONTROLLER_QUORUM_VOTERS: <node_id>@<hostname>:<port>
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:19092,2@kafka2:19093,3@kafka3:19094
+      KAFKA_LOG_DIRS: /var/lib/kafka/data/
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+    volumes:
+      - kafka3_logs:/var/lib/kafka/data/
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    networks:
+      - my-network
+
+  producer-service0:
+    container_name: producer_service0
     build: ./producer-service
     ports:
       - "8080:8080"
     depends_on:
-      - kafka
+      - kafka1
+      - kafka2
+      - kafka3
     deploy:
       resources:
         limits:
           memory: 512M
         reservations:
           memory: 256M
+    environment:
+      KAFKA_BROKERS: kafka1:9092,kafka2:9093,kafka3:9094
     networks:
-      - int-network
-      - ext-network
+      - my-network
 
-  consumer-service:
+  producer-service1:
+    container_name: producer_service1
+    build: ./producer-service
+    ports:
+      - "8180:8080"
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    environment:
+      KAFKA_BROKERS: kafka2:9093,kafka1:9092,kafka3:9094
+    networks:
+      - my-network
+
+  consumer-service0:
+    container_name: consumer_service0
     build: ./consumer-service
     ports:
       - "8081:8080"
     depends_on:
-      - kafka
+      - kafka1
+      - kafka2
+      - kafka3
     deploy:
       resources:
         limits:
           memory: 512M
         reservations:
           memory: 256M
+    environment:
+      KAFKA_BROKERS: kafka1:9092,kafka2:9093,kafka3:9094
     networks:
-      - ext-network
-      - int-network
+      - my-network
+
+  consumer-service1:
+    container_name: consumer_service1
+    build: ./consumer-service
+    ports:
+      - "8181:8080"
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    environment:
+      KAFKA_BROKERS: kafka2:9093,kafka1:9092,kafka3:9094
+    networks:
+      - my-network
+
+  frontend:
+    container_name: frontend1
+    image: python:3.9-slim
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: python3 -m http.server --bind 0.0.0.0 8000
+    ports:
+      - "8000:8000"
+    networks:
+      - my-network
 
 networks:
-  ext-network:
+  my-network:
     driver: bridge
-  int-network:
-    driver: bridge
-    internal: true
-    
+
+volumes:
+  kafka1_logs:
+  kafka2_logs:
+  kafka3_logs:
